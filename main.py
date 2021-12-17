@@ -11,7 +11,7 @@ from datetime import date
 import numpy as np
 import glob
 import pathlib
-import ploting as plt
+import plotting as plt
 
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'

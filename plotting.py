@@ -49,12 +49,12 @@ def plotTheData(final_df, f_df_name, mapcode, month_no, months, missing_data_per
 
 		# interpolation with fedot; machine learning
 		# TODO: fedot zum laufen bringen und plotten
-		fedot = fedot_f(final_df)
+		#fedot = fedot_f(final_df)
 		# save the filled df as csv
-		fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+f_df_name+'_filled_fedot.csv',
-		             sep='\t', encoding='utf-8', index=False,
-		             header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
-		                     "MapCode", "TotalLoadValue", "UpdateTime"])
+		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+f_df_name+'_filled_fedot.csv',
+		#             sep='\t', encoding='utf-8', index=False,
+		#             header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
+		#                     "MapCode", "TotalLoadValue", "UpdateTime"])
 
 		axs[1].plot(x, avg_week['TotalLoadValue'])
 		axs[1].set_xlabel('Dates of the month')
@@ -65,11 +65,11 @@ def plotTheData(final_df, f_df_name, mapcode, month_no, months, missing_data_per
 		# only label the x of axs[2]
 		for ax in axs:
 			ax.label_outer()
-	else:
-		inter_meth = final_df
-		axs[1].plot(x, inter_meth['TotalLoadValue'])
-		axs[1].set_xlabel('Dates of the month')
-		axs[1].set_ylabel('Value')
+	#else:
+	#	inter_meth = final_df
+	#	axs[1].plot(x, inter_meth['TotalLoadValue'])
+	#	axs[1].set_xlabel('Dates of the month')
+	#	axs[1].set_ylabel('Value')
 		# only label the x of axs[2]
 		for ax in axs:
 			ax.label_outer()
