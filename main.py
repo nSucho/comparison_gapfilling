@@ -12,6 +12,7 @@ import numpy as np
 import glob
 import pathlib
 import plotting as plt
+from gap_creator import create_gaps as cgaps
 
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -60,6 +61,38 @@ def inputIdentifier():
 
 			# now check for gaps
 			checkForGaps(file_df, f_df_name, areatypecode, areaname, mapcode, month_no, months)
+
+	# Todo: gaps adden und dann gaps füllen
+	# mapcode of country
+	country_code = 'AT'
+	# read in all the monthly csv-files
+	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
+	                  +country_code+'CTA.csv', recursive=False)
+	files.sort()
+	# concat to one dataframe and reset index
+	df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
+	df_total = df_total.reset_index(drop=True)
+
+	# calc missing data in Original in percent
+	missing_data_o = df_total['TotalLoadValue'].isna().sum()
+	missing_percent = (missing_data_o/len(df_total.index))*100
+	print('amount of NaN in original: '+str(missing_data_o))
+	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
+
+	# fill in random gaps
+	data_with_gaps = cgaps(df_total)
+
+	# calc missing data in modified in percent
+	missing_data = data_with_gaps['TotalLoadValue'].isna().sum()
+	missing_percent = (missing_data/len(data_with_gaps.index))*100
+	print('amount of NaN in modified: '+str(missing_data))
+	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
+
+	# fill and plot data_with_gaps
+	# hand the original with, so we can calc mape
+	data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
+	save_name = '2018_ActualTotalLoad_6.1.A_'+country_code+'CTA.csv'
+	plt.plotTheData(df_total, data_with_gaps, save_name, country_code, missing_percent)
 
 
 def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, months):
@@ -176,20 +209,21 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 	# sort everything on the DateTime-column and save as csv
 	final_df.sort_values(by='DateTime', inplace=True)
 	final_df.reset_index(drop=True, inplace=True)
-	# TODO: saves header with col not tab, I think it works now
+	# save the final df as csv
 	final_df.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/'+f_df_name+'.csv', sep='\t', encoding='utf-8',
 	                index=False,
 	                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 	                        "MapCode", "TotalLoadValue", "UpdateTime"])
 
+	# Todo: delete in the end
 	# calc missing data in percent
-	missing_data = (len(gap_df.index)/len(final_df.index))*100
-	print('Month: '+months[month_no])
-	print(round(missing_data), "Percent is missing Data")
+	#missing_data = (len(gap_df.index)/len(final_df.index))*100
+	#print('Month: '+months[month_no]+' of '+mapcode)
+	#print(round(missing_data), "Percent is missing Data")
 
 	# plot the final data
-	final_df["DateTime"] = pd.to_datetime(final_df["DateTime"])
-	plt.plotTheData(final_df, f_df_name, mapcode, month_no, months, missing_data)
+	#final_df["DateTime"] = pd.to_datetime(final_df["DateTime"])
+	#plt.plotTheData(final_df, f_df_name, mapcode, month_no, months, missing_data)
 
 
 def compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):
