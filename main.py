@@ -11,7 +11,7 @@ from datetime import date
 import numpy as np
 import glob
 import pathlib
-import plotting as plt
+import interpolate_n_plot as plt
 from gap_creator import create_gaps as cgaps
 
 # deactivates unnecessary warnings of pandas
@@ -67,20 +67,20 @@ def inputIdentifier():
 	country_code = 'AT'
 	# read in all the monthly csv-files
 	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
-	                  +country_code+'CTA.csv', recursive=False)
+	                  + country_code+'CTA.csv', recursive=False)
 	files.sort()
 	# concat to one dataframe and reset index
 	df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
 	df_total = df_total.reset_index(drop=True)
+
+	# fill in random gaps
+	data_with_gaps = cgaps(df_total)
 
 	# calc missing data in Original in percent
 	missing_data_o = df_total['TotalLoadValue'].isna().sum()
 	missing_percent = (missing_data_o/len(df_total.index))*100
 	print('amount of NaN in original: '+str(missing_data_o))
 	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
-
-	# fill in random gaps
-	data_with_gaps = cgaps(df_total)
 
 	# calc missing data in modified in percent
 	missing_data = data_with_gaps['TotalLoadValue'].isna().sum()

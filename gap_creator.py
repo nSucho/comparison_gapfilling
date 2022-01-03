@@ -4,29 +4,33 @@ Created on January 2022
 @author: Niko
 """
 import numpy as np
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import glob
-np.random.seed(12)
+
+np.random.seed(15)
+
 
 def create_gaps(data_without_gaps):
-	for col in data_without_gaps.columns:
-		if col == 'TotalLoadValue':
-			data_without_gaps.loc[data_without_gaps.sample(frac=0.2).index, col] = np.nan
+	"""
+	creates a df with 'frac' amount of gaps (as np.nan) from the original
+	:param data_without_gaps: original df without gaps
+	:return: df with gaps
+	"""
+	# save first the original
+	data_without_gaps.to_csv("data/own_data/original_2018.csv", sep='\t', encoding='utf-8',
+	                         index=False, header=["DateTime", "ResolutionCode", "AreaCode",
+	                                              "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue", "UpdateTime"])
 
-	df_w_gaps = data_without_gaps
+	#TODO: funktioniert nur mit geringem frac;
+
+	df_w_gaps = data_without_gaps.copy()
+	# randomly set 0.5% of the data to np.nan
+	for col in df_w_gaps.columns:
+		if col == 'TotalLoadValue':
+			df_w_gaps.loc[df_w_gaps.sample(frac=0.005).index, col] = np.nan
+
+	# save with the gaps inserted
+	df_w_gaps.to_csv("data/own_data/modified_2018.csv", sep='\t', encoding='utf-8',
+	                         index=False, header=["DateTime", "ResolutionCode", "AreaCode",
+	                                              "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue",
+	                                              "UpdateTime"])
 
 	return df_w_gaps
-
-
-if __name__ == '__main__':
-	country_code = 'AT'
-
-	# read in all the monthly csv-files
-	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
-	                  +country_code+'CTA.csv', recursive=False)
-	files.sort()
-	# concat to one dataframe and reset index
-	df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
-	df_total = df_total.reset_index(drop=True)
-	create_gaps(df_total)

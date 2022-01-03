@@ -1,5 +1,5 @@
 """
-Created on December 2021
+Created on January 2021
 
 @author: Niko
 """
@@ -35,7 +35,8 @@ def fedot_method(data_w_nan):
 	without_gap_bidirect = model_gapfiller.forward_inverse_filling(time_series)
 
 	#print(f'Mean absolute error forward: {mean_absolute_error(time_series, without_gap_forward):.3f}')
-	print(f'Mean absolute error bidirect: {mean_absolute_error(time_series, without_gap_bidirect):.3f}')
+
+	#print(f'Mean absolute error bidirect: {mean_absolute_error(time_series, without_gap_bidirect):.3f}')
 
 	return without_gap_bidirect
 
@@ -46,7 +47,8 @@ def get_simple_ridge_pipeline():
 	:return: pipeline
 	"""
 	node_lagged = PrimaryNode('lagged')
-	node_lagged.custom_params = {'window_size': 100}
+	# TODO: ändert die ganze Zeit die Window size zu 2
+	node_lagged.custom_params = {'window_size': 12}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
 	pipeline = Pipeline(node_final)
