@@ -12,7 +12,7 @@ import numpy as np
 import glob
 import pathlib
 import interpolate_n_plot as plt
-from gap_creator import create_gaps as cgaps
+from gap_creator import create_gaps
 
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -62,10 +62,9 @@ def inputIdentifier():
 			# now check for gaps
 			checkForGaps(file_df, f_df_name, areatypecode, areaname, mapcode, month_no, months)
 
-	# Todo: gaps adden und dann gaps füllen
-	# mapcode of country
+	# mapcode of country we want to fill gaps
 	country_code = 'AT'
-	# read in all the monthly csv-files
+	# read in all the monthly csv-files of this country
 	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
 	                  + country_code+'CTA.csv', recursive=False)
 	files.sort()
@@ -73,8 +72,8 @@ def inputIdentifier():
 	df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
 	df_total = df_total.reset_index(drop=True)
 
-	# fill in random gaps
-	data_with_gaps = cgaps(df_total)
+	# fill in random gaps into the df
+	data_with_gaps = create_gaps(df_total)
 
 	# calc missing data in Original in percent
 	missing_data_o = df_total['TotalLoadValue'].isna().sum()
@@ -89,7 +88,7 @@ def inputIdentifier():
 	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
 
 	# fill and plot data_with_gaps
-	# hand the original with, so we can calc mape
+	# also hand the original, so we can calc the error
 	data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
 	save_name = '2018_ActualTotalLoad_6.1.A_'+country_code+'CTA.csv'
 	plt.plotTheData(df_total, data_with_gaps, save_name, country_code, missing_percent)
@@ -228,7 +227,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 
 def compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):
 	"""
-	find gaps between the start and end datetime
+	find gaps between the start and end datetime and return the whole list of gaps
 	:param old_date: the date from which we start to check for gaps
 	:param new_date: the final date
 	:param gap_list: list with already found gaps

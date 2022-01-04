@@ -7,19 +7,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pylab import rcParams
 rcParams['figure.figsize'] = 18, 7
-import matplotlib.dates as mdates
-import pandas as pd
 from sklearn.metrics import mean_absolute_error
 from interpolation_avgweek import averageWeek as avgweek
 from interpolation_polyreg import fill_missing_data as polyreg
 from interpolation_fedot import fedot_method as fedot_f
 
-#TODO: immer wenn predicted wird smpae berechnen und am ende avgen über alle und avg vergleichen
+#TODO: immer wenn predicted wird smape oder mape berechnen
 
 
 def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	"""
-	plot the data
+	interpolate and plot the data
 	:param original: the original df without gaps
 	:param final_df: dataframe with the data to plot (with missing values as NaN)
 	:param save_name: the name of the country to save it more precise as csv
@@ -27,15 +25,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	:param missing_data_perc: amount of missing-data of 'final_df' in percentage
 	:return:
 	"""
-	# plot the original as axs[0], the avg_week as axs[1], the poly_reg as axs[2] and fedot as axs[3]
-	#fig, axs = plt.subplots(4, sharex='all')
-	#fig.suptitle('Total Load Value of 2018 of '+mapcode)
-	#x = final_df['DateTime']
-	#axs[0].plot(x, final_df['TotalLoadValue'])
-	#axs[0].set_xlabel('Date')
-	#axs[0].set_ylabel('Value')
-
-	# if there are missing values, do an interpolation and plot it as axs[2]
+	# if there are missing values, do first an interpolation and than plot it
 	if missing_data_perc != 0:
 		original_series = np.array(original['TotalLoadValue'])
 		# interpolation with average week; standard
@@ -45,6 +35,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		                sep='\t', encoding='utf-8', index=False,
 		                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 		                        "MapCode", "TotalLoadValue", "UpdateTime", "Week"])
+		# create an array to calculate the mean absolute error
 		avg_week_series = np.array(avg_week['TotalLoadValue'])
 
 		# interpolation with polynomial linear regression; master-thesis
@@ -54,10 +45,11 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		                sep='\t', encoding='utf-8', index=False,
 		                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 		                        "MapCode", "TotalLoadValue", "UpdateTime"])
+		# create an array to calculate the mean absolute error
 		poly_reg_series = np.array(poly_reg['TotalLoadValue'])
 
-		# interpolation with fedot; machine learning
-		# TODO: fedot zum laufen bringen und plotten
+		# interpolation with fedot; autoML
+		# TODO: fedot zum laufen bringen
 		fedot = fedot_f(final_df)
 		# save the filled df as csv
 		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_fedot.csv',
@@ -68,7 +60,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		# print the mape
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
-		print(f'Mean absolute error bidirect: {mean_absolute_error(original_series, fedot):.3f}')
+		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot):.3f}')
 
 		plt.plot(original_series, c='blue', alpha=0.4, label='Actual values in the gaps')
 		plt.plot(avg_week_series, c='green', alpha=0.8, label='The avg-Week')
@@ -81,36 +73,5 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		plt.savefig('gaps_filled_plot.png')
 		plt.show()
 
-		"""
-		axs[1].plot(x, avg_week['TotalLoadValue'])
-		axs[1].set_xlabel('Dates of the month')
-		axs[1].set_ylabel('Value')
-
-		axs[2].plot(x, poly_reg['TotalLoadValue'])
-		axs[2].set_xlabel('Dates of the month')
-		axs[2].set_ylabel('Value')
-
-		axs[3].plot(x, fedot)
-		axs[3].set_xlabel('Dates of the month')
-		axs[3].set_ylabel('Value')
-		# only label the x of axs[2]
-		for ax in axs:
-			ax.label_outer()
-		"""
-	#else:
-	#	inter_meth = final_df
-	#	axs[1].plot(x, inter_meth['TotalLoadValue'])
-	#	axs[1].set_xlabel('Dates of the month')
-	#	axs[1].set_ylabel('Value')
-		# only label the x of axs[2]
-	#	for ax in axs:
-	#		ax.label_outer()
-
-	# format the dates
-	#plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=20))
-	#plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-
-	# makes x axis overviewable
-	#plt.gcf().autofmt_xdate()
-	#plt.savefig('first_hand_total.png')
-	#plt.show()
+	else:
+		print('There are no errors to interpolate')
