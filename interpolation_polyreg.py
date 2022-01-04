@@ -26,7 +26,7 @@ def fill_missing_data(df, length):
 	I defined it as 1, because I only use full hours
 	:return: the dataframe with the gaps filled by polynomial linear regression
 	"""
-	# TODO: DTS erstmal weggelassen
+	# TODO: DTS weggelassen
 	# 1. In the following section, we get the indexes and values of a column of a dataframe to a dictionary called
 	# 'column_data'.
 	# 2. Then we iterate the "column_data" dictionary line by line until a null value is found (We called this index

@@ -28,25 +28,45 @@ def fedot_method(data_w_nan):
 
 	from fedot.utilities.ts_gapfilling import ModelGapFiller
 
+	#pipeline = get_pipeline()
 	pipeline = get_simple_ridge_pipeline()
 	model_gapfiller = ModelGapFiller(gap_value=-100.0,
 	                                 pipeline=pipeline)
 
 	# Filling in the gaps
 	without_gap_forward = model_gapfiller.forward_filling(time_series)
+	#without_gap_bidirect = model_gapfiller.forward_inverse_filling(array_with_gaps)
 
 	return without_gap_forward
 
 
 def get_simple_ridge_pipeline():
 	"""
-    Function for creating pipeline
-    :return:
-    """
+	Function for creating pipeline
+	:return:
+	"""
 	node_lagged = PrimaryNode('lagged')
 	node_lagged.custom_params = {'window_size': 50}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
+	pipeline = Pipeline(node_final)
+
+	return pipeline
+
+
+def get_pipeline():
+	"""
+
+	:return:
+	"""
+	node_lagged_1 = PrimaryNode('lagged')
+	node_lagged_1.custom_params = {'window_size': 120}
+	node_lagged_2 = PrimaryNode('lagged')
+	node_lagged_2.custom_params = {'window_size': 2}
+
+	node_first = SecondaryNode('ridge', nodes_from=[node_lagged_1])
+	node_second = SecondaryNode('dtreg', nodes_from=[node_lagged_2])
+	node_final = SecondaryNode('ridge', nodes_from=[node_first, node_second])
 	pipeline = Pipeline(node_final)
 
 	return pipeline

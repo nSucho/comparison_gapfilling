@@ -12,8 +12,6 @@ from interpolation_fedot import fedot_method as fedot_f
 from pylab import rcParams
 rcParams['figure.figsize'] = 18, 7
 
-#TODO: immer wenn predicted wird smape oder mape berechnen
-
 
 def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	"""
@@ -49,7 +47,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		poly_reg_series = np.array(poly_reg['TotalLoadValue'])
 
 		# interpolation with fedot; autoML
-		# TODO: fedot zum laufen bringen
+		# TODO: fedot läuft mit kleiner anzahl an gaps
 		fedot = fedot_f(final_df)
 		# save the filled df as csv
 		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_fedot.csv',
@@ -57,7 +55,8 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		#             header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 		#                     "MapCode", "TotalLoadValue", "UpdateTime"])
 
-		# print the mape
+		# TODO: mae anscheinend besser als smape
+		# print the mae for validation
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
 		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot):.3f}')

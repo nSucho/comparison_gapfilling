@@ -107,7 +107,6 @@ def versuchsCode():
     without_gap_forward = model_gapfiller.forward_filling(array_own_gaps)
     #without_gap_bidirect = model_gapfiller.forward_inverse_filling(array_with_gaps)
 
-    # Todo: benutz ich nur zum prüfen der Genauigkeit
     print(f'Mean absolute error forward: {mean_absolute_error(original_series, without_gap_forward):.3f}')
     #print(f'Mean absolute error bi-direct: {mean_absolute_error(original_series, without_gap_bidirect):.3f}')
 

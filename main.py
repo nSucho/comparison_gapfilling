@@ -17,8 +17,6 @@ from gap_creator import create_gaps
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
 
-# TODO: smape für die eingesetzten values berechnen
-
 
 def inputIdentifier():
 	"""
@@ -198,7 +196,6 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 		# no gaps so final-version stays the same
 		final_df = sorted_df
 	else:
-		# TODO: saves header with col not tab, I think it works now
 		gap_df.to_csv('data/own_data/gaplists/'+f_df_name+'_gap.csv', sep='\t', encoding='utf-8', index=False,
 		              header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 		                      "MapCode", "TotalLoadValue", "UpdateTime"])
@@ -216,16 +213,6 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 	                index=False,
 	                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 	                        "MapCode", "TotalLoadValue", "UpdateTime"])
-
-	# Todo: delete in the end
-	# calc missing data in percent
-	#missing_data = (len(gap_df.index)/len(final_df.index))*100
-	#print('Month: '+months[month_no]+' of '+mapcode)
-	#print(round(missing_data), "Percent is missing Data")
-
-	# plot the final data
-	#final_df["DateTime"] = pd.to_datetime(final_df["DateTime"])
-	#plt.plotTheData(final_df, f_df_name, mapcode, month_no, months, missing_data)
 
 
 def compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):

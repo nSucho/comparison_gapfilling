@@ -38,12 +38,5 @@ def averageWeek(data_w_nan):
 	# inplace=True -> so it writes the value directly into the df new_data_w_nan
 	new_data_w_nan['TotalLoadValue'].fillna(new_data_w_nan.groupby('Week')['TotalLoadValue'].transform('mean'),
 	                                        inplace=True)
-	# rounded
-	#new_data_w_nan['TotalLoadValue'].fillna(new_data_w_nan.groupby('Week')['TotalLoadValue'].transform('mean').round(2),
-	#                                        inplace=True)
-
-	# TODO: for testing
-	#new_data_w_nan.to_csv('data/own_data/test.csv', sep='\t', encoding='utf-8', index=False)
-	#mean_per_week.to_csv('data/own_data/test1.csv', sep='\t', encoding='utf-8', index=False)
 
 	return new_data_w_nan
