@@ -6,7 +6,6 @@ Created on January 2021
 
 # Todo: gap value ist anscheinend -100 oder so
 import numpy as np
-from sklearn.metrics import mean_absolute_error
 # Pipeline and nodes
 from fedot.core.pipelines.pipeline import Pipeline
 from fedot.core.pipelines.node import PrimaryNode, SecondaryNode

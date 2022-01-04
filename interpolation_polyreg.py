@@ -5,9 +5,6 @@ Created on December 2021
 """
 import pandas as pd
 import numpy as np
-import glob
-import copy
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
@@ -108,7 +105,7 @@ def fill_missing_data(df, length):
 
 							else:
 								selected_values = [[i, column_data[i]] for i in range(len(df_copy[column])) if
-								                   (selected_index-i)%(7*24*length) == 0]
+								                   (selected_index-i) % (7*24*length) == 0]
 								selected_values.sort(key=lambda x: abs(selected_index-x[0]))
 								selected_values = selected_values[1:]
 								prediction = polynomial(selected_values, selected_index)
@@ -161,7 +158,7 @@ def polynomial(selected_values, selected_index):
 	# based on the value of the degree
 	# Then we fit the polynomial linear regression function using 'x_poly_train' data and 'y_train' data.
 	# Then based on the polynomial function, using the 'x_poly_test' data we predict the values of the 'y_test' data
-	# Then based on the predicted values and 'y_test" data we calculate the Root Mean Square Error.
+	# Then based on the predicted values and 'y_test' data we calculate the Root Mean Square Error.
 	# Applying the last 4 steps for each degree value, we select the degree value which gives the Lowest Root Mean
 	# Square Error.
 	# Then we fit the polynomial linear regression function again using that degree which gives the Lowest Root Mean

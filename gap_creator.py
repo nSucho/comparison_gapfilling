@@ -29,8 +29,7 @@ def create_gaps(data_without_gaps):
 
 	# save with the gaps inserted
 	df_w_gaps.to_csv("data/own_data/modified_2018.csv", sep='\t', encoding='utf-8',
-	                         index=False, header=["DateTime", "ResolutionCode", "AreaCode",
-	                                              "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue",
-	                                              "UpdateTime"])
+	                 index=False, header=["DateTime", "ResolutionCode", "AreaCode",
+	                                      "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue", "UpdateTime"])
 
 	return df_w_gaps

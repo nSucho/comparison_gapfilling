@@ -5,12 +5,12 @@ Created on December 2021
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from pylab import rcParams
-rcParams['figure.figsize'] = 18, 7
 from sklearn.metrics import mean_absolute_error
 from interpolation_avgweek import averageWeek as avgweek
 from interpolation_polyreg import fill_missing_data as polyreg
 from interpolation_fedot import fedot_method as fedot_f
+from pylab import rcParams
+rcParams['figure.figsize'] = 18, 7
 
 #TODO: immer wenn predicted wird smape oder mape berechnen
 
@@ -25,7 +25,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	:param missing_data_perc: amount of missing-data of 'final_df' in percentage
 	:return:
 	"""
-	# if there are missing values, do first an interpolation and than plot it
+	# if there are missing values, do first an interpolation and then plot it
 	if missing_data_perc != 0:
 		original_series = np.array(original['TotalLoadValue'])
 		# interpolation with average week; standard
