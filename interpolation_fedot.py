@@ -18,36 +18,33 @@ def fedot_method(data_w_nan):
 	:param data_w_nan: the data with gaps (NaN) to fill
 	:return: the data with filled gaps (NaN)
 	"""
-	df_copy = data_w_nan.copy()
+	df_w_nan_copy = data_w_nan.copy()
 	# fill the nan with '-100' so fedot can work with it
-	df_copy = df_copy.fillna(-100)
+	df_w_nan_copy = df_w_nan_copy.fillna(-100)
 
 	# TODO: hier einfügen
 	# Got univariate time series as numpy array
-	time_series = np.array(df_copy['TotalLoadValue'])
+	time_series = np.array(df_w_nan_copy['TotalLoadValue'])
+
+	from fedot.utilities.ts_gapfilling import ModelGapFiller
 
 	pipeline = get_simple_ridge_pipeline()
-	model_gapfiller = ModelGapFiller(gap_value=-100.0, pipeline=pipeline)
+	model_gapfiller = ModelGapFiller(gap_value=-100.0,
+	                                 pipeline=pipeline)
 
 	# Filling in the gaps
-	#without_gap_forward = model_gapfiller.forward_filling(time_series)
-	without_gap_bidirect = model_gapfiller.forward_inverse_filling(time_series)
+	without_gap_forward = model_gapfiller.forward_filling(time_series)
 
-	#print(f'Mean absolute error forward: {mean_absolute_error(time_series, without_gap_forward):.3f}')
-
-	#print(f'Mean absolute error bidirect: {mean_absolute_error(time_series, without_gap_bidirect):.3f}')
-
-	return without_gap_bidirect
+	return without_gap_forward
 
 
 def get_simple_ridge_pipeline():
 	"""
-	Function for creating pipeline
-	:return: pipeline
-	"""
+    Function for creating pipeline
+    :return:
+    """
 	node_lagged = PrimaryNode('lagged')
-	# TODO: ändert die ganze Zeit die Window size zu 2
-	node_lagged.custom_params = {'window_size': 12}
+	node_lagged.custom_params = {'window_size': 50}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
 	pipeline = Pipeline(node_final)

@@ -1,30 +1,31 @@
 # Additional imports
 import glob
+# Additional imports
+from gap_creator import create_gaps
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_absolute_error
+
 # Imports for creating plots
 import matplotlib.pyplot as plt
 from pylab import rcParams
 rcParams['figure.figsize'] = 18, 7
+
 # Pipeline and nodes
 from fedot.core.pipelines.pipeline import Pipeline
 from fedot.core.pipelines.node import PrimaryNode, SecondaryNode
-from fedot.utilities.ts_gapfilling import ModelGapFiller
 
+# Data
+from fedot.core.data.data import InputData
+from fedot.core.data.data_split import train_test_data_setup
+from fedot.core.repository.dataset_types import DataTypesEnum
+
+# Tasks
+from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
 
 # Read all the files
 # mapcode of country
-country_code = 'EE'
-"""
-# read in all the monthly csv-files
-files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
-                  +country_code+'CTA.csv', recursive=False)
-files.sort()
-# concat to one dataframe and reset index
-df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
-df_total = df_total.reset_index(drop=True)
-"""
+country_code = 'AT'
 
 # readin all df's for debug reasons
 df1 = pd.read_csv('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_01_ActualTotalLoad_6.1.A_'
@@ -51,25 +52,32 @@ df11 = pd.read_csv('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_1
                        + country_code+'CTA.csv', sep='\t', encoding='utf-8')
 df12 = pd.read_csv('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_12_ActualTotalLoad_6.1.A_'
                        + country_code+'CTA.csv', sep='\t', encoding='utf-8')
-# combine all df's to one df
-df_total = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df8, df9, df10, df11, df12])
+# combine all df's to one df to train from
+df_train = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df8, df9, df10])
+
+# combine all df's to one df to check how accurate
+df_test = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df8, df9, df10, df11, df12])
+
 
 # fill with -100 for fedot, else it can't find gaps
-df_fedot = df_total.fillna(-100)
+#df_fedot = df_train.fillna(-100) #works
+df_fedot = df_test.fillna(-100)
 
 #prepare the dataframe for filling
 df_fedot['DateTime'] = pd.to_datetime(df_fedot['DateTime'])
 df_fedot.sort_values(by='DateTime', inplace=True)
-df_total = df_total.reset_index(drop=True)
+df_fedot = df_fedot.reset_index(drop=True)
+
+original_series = np.array(df_fedot['TotalLoadValue'])
 
 #save it as csv for debug-reason
 df_fedot.to_csv("data/own_data/ActualTotalLoad_edited/test_all.csv", sep='\t', encoding='utf-8', index=False,
                 header=["DateTime", "ResolutionCode", "AreaCode",
                         "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue", "UpdateTime"])
 
-#df_fedot.plot('DateTime', 'TotalLoadValue')
-#plt.savefig('raw_data.png')
-#plt.show()
+df_fedot.plot('DateTime', 'TotalLoadValue')
+plt.savefig('test_AfterReadIn.png')
+plt.show()
 
 
 def versuchsCode():
@@ -78,35 +86,85 @@ def versuchsCode():
     :return:
     """
 
-    # Got univariate time series as numpy array
-    time_series = np.array(df_fedot['TotalLoadValue'])
-    pipeline = get_simple_ridge_pipeline()
-    model_gapfiller = ModelGapFiller(gap_value=-100.0, pipeline=pipeline)
+    dfwithgaps = create_gaps(df_fedot)
+
+    missing_data = dfwithgaps['TotalLoadValue'].isna().sum()
+    missing_percent = (missing_data/len(dfwithgaps.index))*100
+    print('amount of NaN in modified: '+str(missing_data))
+    print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
+
+    dfwithgaps = dfwithgaps.fillna(-100.0)
+    array_own_gaps = np.array(dfwithgaps['TotalLoadValue'])
+
+    from fedot.utilities.ts_gapfilling import ModelGapFiller
+
+    #pipeline = get_simple_ridge_pipeline()
+    pipeline = get_pipeline()
+    model_gapfiller = ModelGapFiller(gap_value=-100.0,
+                                     pipeline=pipeline)
 
     # Filling in the gaps
-    without_gap_forward = model_gapfiller.forward_filling(time_series)
-    without_gap_bidirect = model_gapfiller.forward_inverse_filling(time_series)
+    without_gap_forward = model_gapfiller.forward_filling(array_own_gaps)
+    #without_gap_bidirect = model_gapfiller.forward_inverse_filling(array_with_gaps)
 
-    #print(f'Mean absolute error forward: {mean_absolute_error(time_series, without_gap_forward):.3f}')
-    print(f'Mean absolute error bidirect: {mean_absolute_error(time_series, without_gap_bidirect):.3f}')
+    # Todo: benutz ich nur zum prüfen der Genauigkeit
+    print(f'Mean absolute error forward: {mean_absolute_error(original_series, without_gap_forward):.3f}')
+    #print(f'Mean absolute error bi-direct: {mean_absolute_error(original_series, without_gap_bidirect):.3f}')
 
-    plt.plot(time_series, c='blue', alpha=0.4, label='Actual values in the gaps')
-    plt.plot(without_gap_forward, c='purple', alpha=0.8, label='FEDOT one-direction')
-    plt.plot(without_gap_bidirect, c='#D77214', alpha=0.8, label='FEDOT bi-directional')
-    plt.ylabel('TotalLoad', fontsize=14)
-    plt.xlabel('DateTime', fontsize=14)
-    plt.legend(fontsize=14)
-    plt.grid()
-    plt.show()
+def get_pipeline():
+    """
 
-# Let's prepare a function for visualizing forecasts
+    :return:
+    """
+    node_lagged_1 = PrimaryNode('lagged')
+    node_lagged_1.custom_params = {'window_size': 120}
+    node_lagged_2 = PrimaryNode('lagged')
+    node_lagged_2.custom_params = {'window_size': 10}
+
+    node_first = SecondaryNode('ridge', nodes_from=[node_lagged_1])
+    node_second = SecondaryNode('dtreg', nodes_from=[node_lagged_2])
+    node_final = SecondaryNode('ridge', nodes_from=[node_first, node_second])
+    pipeline = Pipeline(node_final)
+
+    return pipeline
+
+
+def generate_gaps_in_ts(array_without_gaps, gap_dict, gap_value):
+    """
+    Function for generating gaps with predefined length in the desired indices
+    of an one-dimensional array (time series)
+
+    :param array_without_gaps: an array without gaps
+    :param gap_dict: a dictionary with omissions, where the key is the index in
+    the time series from which the gap will begin. The key value is the length
+    of the gap (elements). -1 in the value means that a skip is generated until
+    the end of the array
+    :param gap_value: value indicating a gap in the array
+
+    :return: one-dimensional array with omissions
+    """
+
+    array_with_gaps = np.copy(array_without_gaps)
+
+    keys = list(gap_dict.keys())
+    for key in keys:
+        gap_size = gap_dict.get(key)
+        if gap_size == -1:
+            # Generating a gap to the end of an array
+            array_with_gaps[key:] = gap_value
+        else:
+            array_with_gaps[key:(key + gap_size)] = gap_value
+
+    return array_with_gaps
+
+
 def get_simple_ridge_pipeline():
     """
-    asd
+    Function for creating pipeline
     :return:
     """
     node_lagged = PrimaryNode('lagged')
-    node_lagged.custom_params = {'window_size': 14}
+    node_lagged.custom_params = {'window_size': 10}
 
     node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
     pipeline = Pipeline(node_final)

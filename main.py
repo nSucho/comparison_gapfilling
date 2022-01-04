@@ -64,20 +64,23 @@ def inputIdentifier():
 
 	# mapcode of country we want to fill gaps
 	country_code = 'AT'
+
 	# read in all the monthly csv-files of this country
 	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+country_code+'/2018_??_ActualTotalLoad_6.1.A_'
 	                  + country_code+'CTA.csv', recursive=False)
 	files.sort()
+
 	# concat to one dataframe and reset index
-	df_total = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
-	df_total = df_total.reset_index(drop=True)
+	df_original = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
+	df_original["DateTime"] = pd.to_datetime(df_original["DateTime"])
+	df_original = df_original.reset_index(drop=True)
 
 	# fill in random gaps into the df
-	data_with_gaps = create_gaps(df_total)
+	data_with_gaps = create_gaps(df_original)
 
 	# calc missing data in Original in percent
-	missing_data_o = df_total['TotalLoadValue'].isna().sum()
-	missing_percent = (missing_data_o/len(df_total.index))*100
+	missing_data_o = df_original['TotalLoadValue'].isna().sum()
+	missing_percent = (missing_data_o/len(df_original.index))*100
 	print('amount of NaN in original: '+str(missing_data_o))
 	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
 
@@ -91,7 +94,7 @@ def inputIdentifier():
 	# also hand the original, so we can calc the error
 	data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
 	save_name = '2018_ActualTotalLoad_6.1.A_'+country_code+'CTA.csv'
-	plt.plotTheData(df_total, data_with_gaps, save_name, country_code, missing_percent)
+	plt.plotTheData(df_original, data_with_gaps, save_name, country_code, missing_percent)
 
 
 def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, months):
