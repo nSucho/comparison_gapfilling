@@ -25,7 +25,7 @@ def create_gaps(data_without_gaps):
 	# randomly set 0.6% (0.006) of the data to np.nan
 	for col in df_w_gaps.columns:
 		if col == 'TotalLoadValue':
-			df_w_gaps.loc[df_w_gaps.sample(frac=0.09).index, col] = np.nan
+			df_w_gaps.loc[df_w_gaps.sample(frac=0.1).index, col] = np.nan
 
 	# save with the gaps inserted
 	df_w_gaps.to_csv("data/own_data/modified_2018.csv", sep='\t', encoding='utf-8',

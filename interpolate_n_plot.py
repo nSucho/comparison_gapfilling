@@ -55,12 +55,14 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		#             header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
 		#                     "MapCode", "TotalLoadValue", "UpdateTime"])
 
-		# TODO: mae anscheinend besser als smape
+		# TODO: mae, vielleicht noch RMSE
 		# print the mae for validation
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
 		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot):.3f}')
 
+		# TODO: schöner/übersichtlicher plotten
+		#   vielleicht nur stellen die leer waren?
 		plt.plot(original_series, c='blue', alpha=0.4, label='Actual values in the gaps')
 		plt.plot(avg_week_series, c='green', alpha=0.8, label='The avg-Week')
 		plt.plot(poly_reg_series, c='purple', alpha=0.8, label='The Poly-Version')

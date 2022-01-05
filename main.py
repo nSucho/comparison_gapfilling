@@ -35,10 +35,6 @@ def inputIdentifier():
 	files = glob.glob('data/ActualTotalLoad_6.1.A/2018_??_ActualTotalLoad_6.1.A.csv', recursive=False)
 	files.sort()
 
-	# for validation give months
-	months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
-	          'November', 'December']
-
 	# run over every file (so every month) in 'files' with every country in 'countries'
 	for file in files:
 		for key in countries:
@@ -54,11 +50,11 @@ def inputIdentifier():
 			f_df_name = f_df_path.name[:29]+'_'+areaname_nospace
 
 			# get the month of the file
-			name_splitted = f_df_name.split("_", 2)
-			month_no = int(name_splitted[1])-1
+			#name_splitted = f_df_name.split("_", 2)
+			#month_no = int(name_splitted[1])-1
 
 			# now check for gaps
-			checkForGaps(file_df, f_df_name, areatypecode, areaname, mapcode, month_no, months)
+			checkForGaps(file_df, f_df_name, areatypecode, areaname, mapcode)
 
 	# mapcode of country we want to fill gaps
 	country_code = 'AT'
@@ -73,29 +69,32 @@ def inputIdentifier():
 	df_original["DateTime"] = pd.to_datetime(df_original["DateTime"])
 	df_original = df_original.reset_index(drop=True)
 
-	# fill in random gaps into the df
-	data_with_gaps = create_gaps(df_original)
-
 	# calc missing data in Original in percent
 	missing_data_o = df_original['TotalLoadValue'].isna().sum()
 	missing_percent = (missing_data_o/len(df_original.index))*100
 	print('amount of NaN in original: '+str(missing_data_o))
 	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
 
-	# calc missing data in modified in percent
-	missing_data = data_with_gaps['TotalLoadValue'].isna().sum()
-	missing_percent = (missing_data/len(data_with_gaps.index))*100
-	print('amount of NaN in modified: '+str(missing_data))
-	print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
+	# if there are no gaps in the df, fill in random gaps
+	if missing_percent == 0:
+		data_with_gaps = create_gaps(df_original)
 
-	# fill and plot data_with_gaps
-	# also hand the original, so we can calc the error
-	data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
-	save_name = '2018_ActualTotalLoad_6.1.A_'+country_code+'CTA.csv'
-	plt.plotTheData(df_original, data_with_gaps, save_name, country_code, missing_percent)
+		# calc missing data in modified in percent
+		missing_data = data_with_gaps['TotalLoadValue'].isna().sum()
+		missing_percent = (missing_data/len(data_with_gaps.index))*100
+		print('amount of NaN in modified: '+str(missing_data))
+		print(round(missing_percent, 2), "Percent is missing Data of "+country_code)
+
+		# fill and plot data_with_gaps
+		# also hand the original, so we can calc the error
+		data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
+		save_name = '2018_ActualTotalLoad_6.1.A_'+country_code+'CTA.csv'
+		plt.plotTheData(df_original, data_with_gaps, save_name, country_code, missing_percent)
+	else:
+		print('There are already gaps, so we do not have a gap-less data to validate our gapfilling')
 
 
-def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, months):
+def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	"""
 	the main function to check for missing data in the csv files
 	:param raw_df: the dataframe of the csv-file
@@ -103,8 +102,6 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 	:param areatypecode: MBA, BZN, CTA or CTY
 	:param areaname: mapcode + areatypecode
 	:param mapcode: code for the country
-	:param month_no: number of the month we are in
-	:param months: list of all months
 	:return:
 	"""
 
@@ -216,6 +213,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode, month_no, m
 
 
 def compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):
+	# TODO: give a own file
 	"""
 	find gaps between the start and end datetime and return the whole list of gaps
 	:param old_date: the date from which we start to check for gaps
