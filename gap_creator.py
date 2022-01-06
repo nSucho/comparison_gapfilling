@@ -24,12 +24,12 @@ def create_gaps(data_without_gaps):
 	# create copy so we do not change original
 	df_w_gaps = data_without_gaps.copy()
 
-	# TODO: funktioniert nur mit frac bis 0.09;
+	# TODO: super langsam bei hoher frac zahl
 	# randomly set frac-amount of the data to np.nan
 	# frac = 0.1 means 10% of the data will be gaps
 	for col in df_w_gaps.columns:
 		if col == 'TotalLoadValue':
-			df_w_gaps.loc[df_w_gaps.sample(frac=0.1).index, col] = np.nan
+			df_w_gaps.loc[df_w_gaps.sample(frac=0.15).index, col] = np.nan
 
 	# save with the gaps inserted
 	df_w_gaps.to_csv("data/own_data/modified_2018.csv", sep='\t', encoding='utf-8',

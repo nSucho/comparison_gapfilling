@@ -13,6 +13,7 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 18, 7
 
 
+# TODO: fit stopwatch around FEDOT to see how long code was running
 def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	"""
 	interpolate and plot the data
@@ -47,8 +48,8 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		poly_reg_series = np.array(poly_reg['TotalLoadValue'])
 
 		# interpolation with fedot; autoML
-		# TODO: fedot läuft mit kleiner anzahl an gaps
 		fedot_forward, fedot = fedot_f(final_df)
+		# TODO: not working cause not a whole df anymore
 		# save the filled df as csv
 		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_fedot.csv',
 		#             sep='\t', encoding='utf-8', index=False,
@@ -59,8 +60,8 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		# print the mae for validation
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
-		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot_forward):.3f}')
-		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot):.3f}')
+		print(f'Mean absolute error fedot_forward: {mean_absolute_error(original_series, fedot_forward):.3f}')
+		print(f'Mean absolute error fedot-bidirect: {mean_absolute_error(original_series, fedot):.3f}')
 
 		# TODO: schöner/übersichtlicher plotten
 		#   vielleicht nur stellen die leer waren?

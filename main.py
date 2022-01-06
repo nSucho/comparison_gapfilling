@@ -76,9 +76,9 @@ def readin_n_sort_data():
 	if missing_percent_o == 0:
 		# create manually random gaps or duplicate gaps from another country
 		# manually
-		#data_with_gaps = create_gaps(df_original)
+		data_with_gaps = create_gaps(df_original)
 		# duplicate
-		data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
+		#data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
 
 		# calc missing data in modified in percent
 		missing_percent_m = calc_missing_data(data_with_gaps)
