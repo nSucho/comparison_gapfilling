@@ -1,7 +1,7 @@
 """
 Created on December 2021
 
-@author: Niko
+@author: Niko Suchowitz
 """
 import numpy as np
 import matplotlib.pyplot as plt
