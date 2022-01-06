@@ -1,7 +1,7 @@
 """
 Created on January 2021
 
-@author: Niko
+@author: Niko Suchowitz
 """
 
 # Todo: gap value ist anscheinend -100 oder so
@@ -18,7 +18,9 @@ def fedot_method(data_w_nan):
 	:param data_w_nan: the data with gaps (NaN) to fill
 	:return: the data with filled gaps (NaN)
 	"""
+	# copy the df so we do not change the original
 	df_w_nan_copy = data_w_nan.copy()
+
 	# fill the nan with '-100' so fedot can work with it
 	df_w_nan_copy = df_w_nan_copy.fillna(-100)
 
@@ -26,19 +28,19 @@ def fedot_method(data_w_nan):
 	# Got univariate time series as numpy array
 	time_series = np.array(df_w_nan_copy['TotalLoadValue'])
 
-	from fedot.utilities.ts_gapfilling import ModelGapFiller
-
+	# create a pipeline
 	#pipeline = get_pipeline()
 	pipeline = get_simple_ridge_pipeline()
 	model_gapfiller = ModelGapFiller(gap_value=-100.0,
 	                                 pipeline=pipeline)
 
 	# Filling in the gaps
-	#without_gap_forward = model_gapfiller.forward_filling(time_series)
+	without_gap_forward = model_gapfiller.forward_filling(time_series)
 	without_gap_bidirect = model_gapfiller.forward_inverse_filling(time_series)
 
-	#return without_gap_forward
-	return without_gap_bidirect
+	#return the filled gaps
+	return without_gap_forward, without_gap_bidirect
+
 
 def get_simple_ridge_pipeline():
 	"""

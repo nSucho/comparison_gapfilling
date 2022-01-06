@@ -48,7 +48,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 
 		# interpolation with fedot; autoML
 		# TODO: fedot läuft mit kleiner anzahl an gaps
-		fedot = fedot_f(final_df)
+		fedot_forward, fedot = fedot_f(final_df)
 		# save the filled df as csv
 		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_fedot.csv',
 		#             sep='\t', encoding='utf-8', index=False,
@@ -59,6 +59,7 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		# print the mae for validation
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
+		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot_forward):.3f}')
 		print(f'Mean absolute error fedot: {mean_absolute_error(original_series, fedot):.3f}')
 
 		# TODO: schöner/übersichtlicher plotten

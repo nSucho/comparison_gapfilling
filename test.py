@@ -1,3 +1,10 @@
+"""
+Created on January 2021
+
+pure test-file to check if parts of new code run correctly before including it into the main code.
+
+@author: Niko Suchowitz
+"""
 # Additional imports
 import glob
 # Additional imports

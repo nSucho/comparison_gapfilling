@@ -1,7 +1,7 @@
 """
 Created on December 2021
 
-@author: Niko
+@author: Niko Suchowitz
 """
 import pandas as pd
 import numpy as np
