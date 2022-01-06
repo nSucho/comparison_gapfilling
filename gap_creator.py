@@ -24,8 +24,9 @@ def create_gaps(data_without_gaps):
 	# create copy so we do not change original
 	df_w_gaps = data_without_gaps.copy()
 
-	#TODO: funktioniert nur mit frac bis 0.09;
-	# randomly set 0.6% (0.006) of the data to np.nan
+	# TODO: funktioniert nur mit frac bis 0.09;
+	# randomly set frac-amount of the data to np.nan
+	# frac = 0.1 means 10% of the data will be gaps
 	for col in df_w_gaps.columns:
 		if col == 'TotalLoadValue':
 			df_w_gaps.loc[df_w_gaps.sample(frac=0.1).index, col] = np.nan
