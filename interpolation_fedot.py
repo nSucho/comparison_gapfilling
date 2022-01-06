@@ -34,11 +34,11 @@ def fedot_method(data_w_nan):
 	                                 pipeline=pipeline)
 
 	# Filling in the gaps
-	without_gap_forward = model_gapfiller.forward_filling(time_series)
-	#without_gap_bidirect = model_gapfiller.forward_inverse_filling(array_with_gaps)
+	#without_gap_forward = model_gapfiller.forward_filling(time_series)
+	without_gap_bidirect = model_gapfiller.forward_inverse_filling(time_series)
 
-	return without_gap_forward
-
+	#return without_gap_forward
+	return without_gap_bidirect
 
 def get_simple_ridge_pipeline():
 	"""
@@ -46,7 +46,7 @@ def get_simple_ridge_pipeline():
 	:return:
 	"""
 	node_lagged = PrimaryNode('lagged')
-	node_lagged.custom_params = {'window_size': 50}
+	node_lagged.custom_params = {'window_size': 150}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
 	pipeline = Pipeline(node_final)

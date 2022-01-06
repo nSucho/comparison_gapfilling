@@ -1,11 +1,13 @@
 """
 Created on January 2022
 
+- you have to use the version 0.5 of FEDOT
+
 @author: Niko
 """
 import numpy as np
 
-np.random.seed(150)
+np.random.seed(15)
 
 
 def create_gaps(data_without_gaps):

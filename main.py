@@ -118,7 +118,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	# first we have to set the 'DateTime' as index
 	sorted_df = sorted_df.set_index(['DateTime'])
 	# now resample
-	sorted_df['TotalLoadValue'] = sorted_df.resample('H').mean()['TotalLoadValue']
+	sorted_df['TotalLoadValue'] = round(sorted_df.resample('H').mean()['TotalLoadValue'], 2)
 	# now drop the unnecessary rows
 	sorted_df.dropna(subset=["TotalLoadValue"], inplace=True)
 	# now set 'DateTime' back as column
