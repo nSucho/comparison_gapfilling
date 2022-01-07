@@ -95,8 +95,8 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 		# set new_date to current datetime
 		new_date = datetime
 		# compare the time of the dates
-		gap_list = compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode,
-		                          areaname, mapcode)
+		gap_list = gap_list_creator(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode,
+		                            areaname, mapcode)
 		# set the current datetime as old
 		old_date = datetime
 
@@ -134,12 +134,15 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	                        "MapCode", "TotalLoadValue", "UpdateTime"])
 
 
-def compareForGaps(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):
+def gap_list_creator(old_date, new_date, gap_list, resolutioncode, areacode, areatypecode, areaname, mapcode):
 	"""
 	find gaps between the start and end datetime and return the whole list of gaps
+
 	:param old_date: the date from which we start to check for gaps
 	:param new_date: the final date
 	:param gap_list: list with already found gaps
+
+	The following inputs are just for proper saving
 	:param resolutioncode:
 	:param areacode:
 	:param areatypecode: MBA, BZN, CTA or CTY

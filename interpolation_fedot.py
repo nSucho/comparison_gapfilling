@@ -57,7 +57,7 @@ def fedot_method(data_w_nan, mapcode, save_name):
 		'data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_forward.csv',
 		sep='\t', encoding='utf-8', index=False)
 	pd.DataFrame(without_gap_bidirect).to_csv(
-		'data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_forward.csv',
+		'data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_bidirect.csv',
 		sep='\t', encoding='utf-8', index=False)
 
 	#return the filled gaps

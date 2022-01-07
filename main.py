@@ -5,14 +5,14 @@ Created on December 2021
 """
 import interpolate_n_plot as plt
 from gap_creator import create_gaps
-from nan_index_duplicator import duplicate_nans
+from gap_duplicator import duplicate_nans
 from unify_data import unify_monthly, unify_year
 import pandas as pd
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
-def readin_n_sort_data():
+def readin_data():
 	"""
 	Prepare the data, so it is possible to fill in the gaps; Then fill those gaps and plot it
 
@@ -81,4 +81,4 @@ def calc_missing_data(df_to_check):
 
 
 if __name__ == '__main__':
-	readin_n_sort_data()
+	readin_data()

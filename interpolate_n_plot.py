@@ -37,29 +37,33 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 		poly_reg_series = np.array(poly_reg['TotalLoadValue'])
 
 		# interpolation with fedot; autoML
-		fedot_forward, fedot_bidirect = fedot_f(final_df, mapcode, save_name)
+		#fedot_forward, fedot_bidirect = fedot_f(final_df, mapcode, save_name)
 
 		# TODO: mae, vielleicht noch RMSE
 		# print the mae for validation
-		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
-		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
-		print(f'Mean absolute error fedot_forward: {mean_absolute_error(original_series, fedot_forward):.3f}')
-		print(f'Mean absolute error fedot-bidirect: {mean_absolute_error(original_series, fedot_bidirect):.3f}')
+		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.2f}')
+		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.2f}')
+		#print(f'Mean absolute error fedot_forward: {mean_absolute_error(original_series, fedot_forward):.2f}')
+		#print(f'Mean absolute error fedot-bidirect: {mean_absolute_error(original_series, fedot_bidirect):.2f}')
 
 		# TODO: schöner/übersichtlicher plotten
 		#   vielleicht nur stellen die leer waren?
 		#   vielleicht immer tage zusammenfassen?
+		""" first try, looks ok
 		plt.plot(original_series, c='blue', alpha=0.4, label='Actual values in the gaps')
 		plt.plot(avg_week_series, c='green', alpha=0.8, label='The avg-Week')
 		plt.plot(poly_reg_series, c='purple', alpha=0.8, label='The Poly-Version')
-		plt.plot(fedot_forward, c='red', alpha=0.8, label='FEDOT forward')
-		plt.plot(fedot_bidirect, c='#D77214', alpha=0.8, label='FEDOT bi-directional')
+		#plt.plot(fedot_forward, c='red', alpha=0.8, label='FEDOT forward')
+		#plt.plot(fedot_bidirect, c='#D77214', alpha=0.8, label='FEDOT bi-directional')
 		plt.ylabel('Total Load', fontsize=14)
 		plt.xlabel('Time Index', fontsize=14)
 		plt.legend(fontsize=14)
 		plt.grid()
 		plt.savefig('gaps_filled_plot.png')
 		plt.show()
+		"""
+
+
 
 	else:
 		print('There are no errors to interpolate')
