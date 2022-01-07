@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime as dt
 from datetime import date
 import calendar
+import os
 
 
 def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
@@ -121,7 +122,11 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	# sort everything on the DateTime-column and save as csv
 	final_df.sort_values(by='DateTime', inplace=True)
 	final_df.reset_index(drop=True, inplace=True)
-	# save the final df as csv
+	# save the final df as csv, check first if folder exists
+	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode)
+	if not isExist:
+		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode)
+	# now safe
 	final_df.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/'+f_df_name+'.csv', sep='\t', encoding='utf-8',
 	                index=False,
 	                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",

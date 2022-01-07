@@ -3,12 +3,10 @@ Created on December 2021
 
 @author: Niko Suchowitz
 """
-import glob
-import pathlib
 import interpolate_n_plot as plt
 from gap_creator import create_gaps
-from gap_finder import checkForGaps
 from nan_index_duplicator import duplicate_nans
+from unify_data import unify_monthly, unify_year
 import pandas as pd
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -16,65 +14,39 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 def readin_n_sort_data():
 	"""
-	Prepare the data, so its possible to fill in the gaps; Then fill those gaps and plot it
+	Prepare the data, so it is possible to fill in the gaps; Then fill those gaps and plot it
 
 	:return:
 	"""
 	# all the countries we want to check in the files and also the areatype
 	# Key: Value = Country: MapCode
-	countries = {'Estonia': 'EE', 'Austria': 'AT'}
+	countries = {'Estonia': 'EE', 'Austria': 'AT', 'Italy': 'IT'}
 	# MBA, BZN, CTA or CTY(most of the time all have the same values, so doesn't matter)
 	areatypecode = "CTA"
+	# choose the year of which the data gets generalized (earliest 2014)
+	# 2014 has the most gaps
+	year = "2018"
 
-	# read in all file names of the year 20XX(the earliest possible is 2014) with ActualTotalLoad as a list
-	# recursive = false -> don't check subfolder
-	# also sort on name, so we have it in monthly-order
-	files = glob.glob('data/ActualTotalLoad_6.1.A/2018_??_ActualTotalLoad_6.1.A.csv', recursive=False)
-	files.sort()
+	# here the wanted data gets unified
+	unify_monthly(countries, areatypecode, year)
 
-	# run over every file (every file = every month) in 'files' with every country given in 'countries'
-	for file in files:
-		for key in countries:
-
-			# read in the csv-file
-			file_df = pd.read_csv(file, sep='\t', encoding='utf-8')
-
-			# set the vars we need
-			areaname = countries[key]+" "+areatypecode  #e.g. "EE CTA"
-			mapcode = countries[key]
-
-			# get the name and format it to save files with proper names
-			f_df_path = pathlib.PurePath(file)
-			areaname_nospace = areaname.replace(' ', '')  # get rid of whitespace
-			f_df_name = f_df_path.name[:29]+'_'+areaname_nospace
-
-			# now check for gaps and fill them with np.nan
-			checkForGaps(file_df, f_df_name, areatypecode, areaname, mapcode)
-
-	# 'mapcode' of country we want to fill gaps
-	# AT is a perfekt file without gaps
+	# now choose 'mapcode' of the gap-less country (original) to fill with gaps
 	mapcode_gapfree = 'AT'
-	# set the 'mapcode' you want to duplicate the gaps from
+	# if the gaps should be duplicatet from another country, choose the 'mapcode' of the country with gaps here
 	mapcode_wgap = 'EE'
 
-	# read in all the monthly csv-files of this country
-	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+mapcode_gapfree+'/2018_??_ActualTotalLoad_6.1.A_'
-	                  + mapcode_gapfree+'CTA.csv', recursive=False)
-	files.sort()
+	# unify the data to have a df of a whole year
+	df_original = unify_year(mapcode_gapfree, year)
 
-	# concat to one dataframe and reset index
-	df_original = pd.concat([pd.read_csv(file, sep='\t', encoding='utf-8') for file in files])
-	df_original["DateTime"] = pd.to_datetime(df_original["DateTime"])
-	df_original = df_original.reset_index(drop=True)
-
-	# calc missing data in Original in percent
+	# calc missing data in original in percent
 	missing_percent_o = calc_missing_data(df_original)
 	print('amount of NaN in original: '+str(missing_percent_o))
 	print(round(missing_percent_o, 2), "Percent is missing Data of "+mapcode_gapfree)
 
 	# if there are no gaps in the df, fill in random gaps
 	if missing_percent_o == 0:
-		# create manually random gaps or duplicate gaps from another country
+		# create manually random gaps or duplicate gaps from another country;
+		# comment the other out
 		# manually
 		data_with_gaps = create_gaps(df_original)
 		# duplicate
