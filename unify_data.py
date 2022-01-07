@@ -56,7 +56,7 @@ def unify_year(mapcode_gapfree, year):
 	"""
 	# read in all the monthly csv-files of this country
 	files = glob.glob('data/own_data/ActualTotalLoad_edited/'+mapcode_gapfree+'/'+year+'_??_ActualTotalLoad_6.1.A_'
-	                  +mapcode_gapfree+'CTA.csv', recursive=False)
+	                  + mapcode_gapfree+'CTA.csv', recursive=False)
 	files.sort()
 
 	# concat to one dataframe and reset index
@@ -65,10 +65,10 @@ def unify_year(mapcode_gapfree, year):
 	df_original = df_original.reset_index(drop=True)
 
 	# safe whole year as csv
-	df_original.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode_gapfree+'/'+year+'_'+mapcode_gapfree+'_original.csv'
-	                   , sep='\t', encoding='utf-8',
-	                index=False,
-	                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
-	                        "MapCode", "TotalLoadValue", "UpdateTime"])
+	df_original.to_csv(
+		'data/own_data/ActualTotalLoad_edited/'+mapcode_gapfree+'/'+year+'_'+mapcode_gapfree+'_original.csv',
+		sep='\t', encoding='utf-8', index=False,
+		header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
+		        "MapCode", "TotalLoadValue", "UpdateTime"])
 
 	return df_original

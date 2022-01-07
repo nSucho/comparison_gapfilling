@@ -24,7 +24,6 @@ def create_gaps(data_without_gaps):
 	# create copy so we do not change original
 	df_w_gaps = data_without_gaps.copy()
 
-	# TODO: super langsam bei hoher frac zahl
 	# randomly set frac-amount of the data to np.nan
 	# frac = 0.1 means 10% of the data will be gaps
 	for col in df_w_gaps.columns:

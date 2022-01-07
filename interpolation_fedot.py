@@ -7,16 +7,20 @@ Created on January 2021
 # TODO: implement better pipeline
 import time
 import numpy as np
+import os
 # Pipeline and nodes
+import pandas as pd
 from fedot.core.pipelines.pipeline import Pipeline
 from fedot.core.pipelines.node import PrimaryNode, SecondaryNode
 from fedot.utilities.ts_gapfilling import ModelGapFiller
 
 
-def fedot_method(data_w_nan):
+def fedot_method(data_w_nan, mapcode, save_name):
 	"""
 	The third method, the autoML solution fedot
 	:param data_w_nan: the data with gaps (NaN) to fill
+	:param mapcode: mapcode to save file properly
+	:param save_name: name to save file properly
 	:return: the data with filled gaps (NaN)
 	"""
 	# copy the df so we do not change the original
@@ -44,6 +48,18 @@ def fedot_method(data_w_nan):
 	time_lapsed = end_time-start_time
 	time_convert(time_lapsed)
 
+	#first check if folder exists
+	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot')
+	if not isExist:
+		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot')
+	# save the filled df as csv
+	pd.DataFrame(without_gap_forward).to_csv(
+		'data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_forward.csv',
+		sep='\t', encoding='utf-8', index=False)
+	pd.DataFrame(without_gap_bidirect).to_csv(
+		'data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_forward.csv',
+		sep='\t', encoding='utf-8', index=False)
+
 	#return the filled gaps
 	return without_gap_forward, without_gap_bidirect
 
@@ -51,7 +67,7 @@ def fedot_method(data_w_nan):
 def get_simple_ridge_pipeline():
 	"""
 	Function for creating pipeline
-	:return:
+	:return: the pipeline
 	"""
 	node_lagged = PrimaryNode('lagged')
 	node_lagged.custom_params = {'window_size': 150}
@@ -64,7 +80,7 @@ def get_simple_ridge_pipeline():
 
 def time_convert(sec):
 	"""
-
+	converts the time from seconds to minutes and hours
 	:param sec: time passed in seconds
 	:return:
 	"""

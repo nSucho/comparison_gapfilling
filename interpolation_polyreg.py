@@ -9,9 +9,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
+import os
 
 
-def fill_missing_data(df, length):
+def fill_missing_data(df, length, mapcode, save_name):
 	"""
 	The method created by Lovindu Wijesinghe using polynomial linear regression;
 
@@ -20,13 +21,14 @@ def fill_missing_data(df, length):
 	I change the code a bit, that it now works with the full df I hand to the function 'fill_missing_data'.
 	:param df: the full dataframe with gaps (NaN) to fill
 	:param length: Quoted from the original Code:
+	:param mapcode: mapcode to save file properly
+	:param save_name: name to save file properly
 	"Also this returns an integer ('divider') based on the file length to get the energy values
 	in a later step. In 15 min interval files this is 4, in 30 min interval files this is 2 and in 1 hour interval
 	files this is 1."
 	I defined it as 1, because I only use full hours
 	:return: the dataframe with the gaps filled by polynomial linear regression
 	"""
-	# TODO: DTS weggelassen
 	# 1. In the following section, we get the indexes and values of a column of a dataframe to a dictionary called
 	# 'column_data'.
 	# 2. Then we iterate the "column_data" dictionary line by line until a null value is found (We called this index
@@ -138,7 +140,17 @@ def fill_missing_data(df, length):
 					prediction = polynomial(selected_values, selected_index)
 					df_copy.loc[selected_index, column] = prediction
 	# df = df.replace(['n/e', np.nan], 0)
-	df_copy.to_csv('data/own_data/test.csv', sep='\t', encoding='utf-8', index=False)
+
+	#first check if folder exists
+	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode+'/poly_reg')
+	if not isExist:
+		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode+'/poly_reg')
+	# save the filled df as csv
+	df_copy.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/poly_reg/'+save_name+'_filled_poly.csv',
+	               sep='\t', encoding='utf-8', index=False,
+	               header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
+	                       "MapCode", "TotalLoadValue", "UpdateTime"])
+
 	return df_copy
 
 

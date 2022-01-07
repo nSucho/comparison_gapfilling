@@ -126,6 +126,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode)
 	if not isExist:
 		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode)
+		print("The new directory for "+mapcode+" is created!")
 	# now safe
 	final_df.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/'+f_df_name+'.csv', sep='\t', encoding='utf-8',
 	                index=False,

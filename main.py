@@ -31,7 +31,8 @@ def readin_n_sort_data():
 	unify_monthly(countries, areatypecode, year)
 
 	# now choose 'mapcode' of the gap-less country (original) to fill with gaps
-	mapcode_gapfree = 'AT'
+	# example IT and AT perfect
+	mapcode_gapfree = 'IT'
 	# if the gaps should be duplicatet from another country, choose the 'mapcode' of the country with gaps here
 	mapcode_wgap = 'EE'
 
@@ -48,9 +49,9 @@ def readin_n_sort_data():
 		# create manually random gaps or duplicate gaps from another country;
 		# comment the other out
 		# manually
-		data_with_gaps = create_gaps(df_original)
+		#data_with_gaps = create_gaps(df_original)
 		# duplicate
-		#data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
+		data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
 
 		# calc missing data in modified in percent
 		missing_percent_m = calc_missing_data(data_with_gaps)
@@ -60,7 +61,7 @@ def readin_n_sort_data():
 		# fill and plot data_with_gaps
 		# also hand the original, so we can calc the error
 		data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
-		save_name = '2018_ActualTotalLoad_6.1.A_'+mapcode_gapfree+'CTA.csv'
+		save_name = '2018_ActualTotalLoad_6.1.A_'+mapcode_gapfree+'_'+areatypecode
 		plt.plotTheData(df_original, data_with_gaps, save_name, mapcode_gapfree, missing_percent_m)
 	else:
 		print('There are already gaps, so we do not have a gap-less data to validate our gapfilling')

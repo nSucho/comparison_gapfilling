@@ -13,7 +13,6 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 18, 7
 
 
-# TODO: fit stopwatch around FEDOT to see how long code was running
 def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	"""
 	interpolate and plot the data
@@ -28,47 +27,33 @@ def plotTheData(original, final_df, save_name, mapcode, missing_data_perc):
 	if missing_data_perc != 0:
 		original_series = np.array(original['TotalLoadValue'])
 		# interpolation with average week; standard
-		avg_week = avgweek(final_df)
-		# save the filled df as csv
-		avg_week.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/avg_week/'+save_name+'_filled_avg.csv',
-		                sep='\t', encoding='utf-8', index=False,
-		                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
-		                        "MapCode", "TotalLoadValue", "UpdateTime", "Week"])
+		avg_week = avgweek(final_df, mapcode, save_name)
 		# create an array to calculate the mean absolute error
 		avg_week_series = np.array(avg_week['TotalLoadValue'])
 
 		# interpolation with polynomial linear regression; master-thesis
-		poly_reg = polyreg(final_df, 1)
-		# save the filled df as csv
-		poly_reg.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/poly_reg/'+save_name+'_filled_poly.csv',
-		                sep='\t', encoding='utf-8', index=False,
-		                header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
-		                        "MapCode", "TotalLoadValue", "UpdateTime"])
+		poly_reg = polyreg(final_df, 1, mapcode, save_name)
 		# create an array to calculate the mean absolute error
 		poly_reg_series = np.array(poly_reg['TotalLoadValue'])
 
 		# interpolation with fedot; autoML
-		fedot_forward, fedot = fedot_f(final_df)
-		# TODO: not working cause not a whole df anymore
-		# save the filled df as csv
-		#fedot.to_csv('data/own_data/ActualTotalLoad_edited/'+mapcode+'/fedot/'+save_name+'_filled_fedot.csv',
-		#             sep='\t', encoding='utf-8', index=False,
-		#             header=["DateTime", "ResolutionCode", "AreaCode", "AreaTypeCode", "AreaName",
-		#                     "MapCode", "TotalLoadValue", "UpdateTime"])
+		fedot_forward, fedot_bidirect = fedot_f(final_df, mapcode, save_name)
 
 		# TODO: mae, vielleicht noch RMSE
 		# print the mae for validation
 		print(f'Mean absolute error avg-week: {mean_absolute_error(original_series, avg_week_series):.3f}')
 		print(f'Mean absolute error poly-reg: {mean_absolute_error(original_series, poly_reg_series):.3f}')
 		print(f'Mean absolute error fedot_forward: {mean_absolute_error(original_series, fedot_forward):.3f}')
-		print(f'Mean absolute error fedot-bidirect: {mean_absolute_error(original_series, fedot):.3f}')
+		print(f'Mean absolute error fedot-bidirect: {mean_absolute_error(original_series, fedot_bidirect):.3f}')
 
 		# TODO: schöner/übersichtlicher plotten
 		#   vielleicht nur stellen die leer waren?
+		#   vielleicht immer tage zusammenfassen?
 		plt.plot(original_series, c='blue', alpha=0.4, label='Actual values in the gaps')
 		plt.plot(avg_week_series, c='green', alpha=0.8, label='The avg-Week')
 		plt.plot(poly_reg_series, c='purple', alpha=0.8, label='The Poly-Version')
-		plt.plot(fedot, c='#D77214', alpha=0.8, label='FEDOT bi-directional')
+		plt.plot(fedot_forward, c='red', alpha=0.8, label='FEDOT forward')
+		plt.plot(fedot_bidirect, c='#D77214', alpha=0.8, label='FEDOT bi-directional')
 		plt.ylabel('Total Load', fontsize=14)
 		plt.xlabel('Time Index', fontsize=14)
 		plt.legend(fontsize=14)
