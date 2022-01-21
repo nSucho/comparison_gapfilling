@@ -3,7 +3,7 @@ Created on December 2021
 
 @author: Niko Suchowitz
 """
-import interpolate_n_plot as plt
+import interpolate_main as int_n_plt
 from gap_creator import create_gaps
 from gap_duplicator import duplicate_nans
 from unify_data import unify_monthly, unify_year
@@ -20,8 +20,9 @@ def readin_data():
 	"""
 	# all the countries we want to check in the files and also the areatype
 	# Key: Value = Country: MapCode
-	countries = {'Estonia': 'EE', 'Austria': 'AT', 'Italy': 'IT'}
-	# MBA, BZN, CTA or CTY(most of the time all three have the same values, so doesn't matter)
+	# first value is later taken as 'gapless' country and second value as country with gaps
+	countries = {'Austria': 'AT', 'Estonia': 'EE', 'Italy': 'IT'}
+	# MBA, BZN, CTA or CTY(most of the time all three have the same values, so just pick one)
 	areatypecode = "CTA"
 	# choose the year of which the data gets generalized (earliest 2014)
 	# 2014 has the most gaps
@@ -30,11 +31,10 @@ def readin_data():
 	# here the wanted data gets unified
 	unify_monthly(countries, areatypecode, year)
 
-	# now choose 'mapcode' of the gap-less country (original) to fill with gaps
-	# example IT and AT perfect
-	mapcode_gapfree = 'AT'
-	# if the gaps should be duplicatet from another country, choose the 'mapcode' of the country with gaps here
-	mapcode_wgap = 'EE'
+	# now get 'mapcode' of the gap-less country (original) to fill with gaps
+	mapcode_gapfree = list(countries.values())[0]
+	# to duplicate the gaps from another country, get the 'mapcode' of the country with gaps here
+	mapcode_wgap = list(countries.values())[1]
 
 	# unify the data to have a df of a whole year
 	df_original = unify_year(mapcode_gapfree, year)
@@ -47,7 +47,7 @@ def readin_data():
 	# if there are no gaps in the df, fill in random gaps
 	if missing_percent_o == 0:
 		# create manually random gaps or duplicate gaps from another country;
-		# comment the other out
+		# comment the other out, both at the same time not recommended!
 		# manually
 		#data_with_gaps = create_gaps(df_original)
 		# duplicate
@@ -58,11 +58,14 @@ def readin_data():
 		print('amount of NaN in modified: '+str(missing_percent_m))
 		print(missing_percent_m, "Percent is missing Data of "+mapcode_gapfree)
 
-		# fill and plot data_with_gaps
-		# also hand the original, so we can calc the error
-		data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
-		save_name = '2018_ActualTotalLoad_6.1.A_'+mapcode_gapfree+'_'+areatypecode
-		plt.fill_and_plot(df_original, data_with_gaps, save_name, mapcode_gapfree, missing_percent_m)
+		if missing_percent_m != 0:
+			# fill and plot data_with_gaps
+			# also hand the original, so we can calc the error
+			data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
+			save_name = '2018_ActualTotalLoad_6.1.A_'+mapcode_gapfree+'_'+areatypecode
+			int_n_plt.fill_and_valid(df_original, data_with_gaps, save_name, mapcode_gapfree, missing_percent_m)
+		else:
+			print("There are no gaps to fill!")
 	else:
 		print('There are already gaps, so we do not have a gap-less data to validate our gapfilling')
 

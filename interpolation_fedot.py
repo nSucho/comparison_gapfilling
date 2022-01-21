@@ -31,7 +31,7 @@ def fedot_method(data_w_nan, mapcode, save_name):
 	# Got univariate time series as numpy array
 	time_series = np.array(df_w_nan_copy['TotalLoadValue'])
 
-	# create a pipeline
+	# create a pipeline and defines the values which count as gaps
 	pipeline = get_simple_ridge_pipeline()
 	model_gapfiller = ModelGapFiller(gap_value=-100.0,
 	                                 pipeline=pipeline)
@@ -70,7 +70,7 @@ def get_simple_ridge_pipeline():
 	:return: the pipeline
 	"""
 	node_lagged = PrimaryNode('lagged')
-	node_lagged.custom_params = {'window_size': 150}
+	node_lagged.custom_params = {'window_size': 250}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
 	pipeline = Pipeline(node_final)

@@ -38,7 +38,6 @@ def averageWeek(data_w_nan, mapcode, save_name):
 	new_data_w_nan['Week'] = pd.factorize(new_data_w_nan['DateTime'].dt.isocalendar().week)[0]+1
 
 	# now we fill all NaN's with the mean of this week;
-	# rounded to two numbers for testing reason;
 	# inplace=True -> so it writes the value directly into the df new_data_w_nan
 	new_data_w_nan['TotalLoadValue'].fillna(new_data_w_nan.groupby('Week')['TotalLoadValue'].transform('mean'),
 	                                        inplace=True)

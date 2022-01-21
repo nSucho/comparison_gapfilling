@@ -11,7 +11,7 @@ from interpolation_fedot import fedot_method as fedot
 from plot_file import *
 
 
-def fill_and_plot(original, df_w_gaps, save_name, mapcode, missing_data_perc):
+def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 	"""
 	interpolate and afterwards plot the data
 	:param original: the original df without gaps

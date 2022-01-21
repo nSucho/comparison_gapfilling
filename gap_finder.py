@@ -25,7 +25,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	# gaps are: missing 'DateTime' for that day/hour
 	# DateTime is in 'YYYY-MM-DD HH:MM:00:00.000' and once per full hour
 
-	# to cut down by more than one attr
+	# only take rows into 'sorted_df' which are equal to our wanted attributes
 	sorted_df = raw_df.loc[(raw_df["MapCode"] == mapcode) & (raw_df["AreaTypeCode"] == areatypecode)]
 	sorted_df["DateTime"] = pd.to_datetime(sorted_df["DateTime"])
 	# sort by DateTime-column

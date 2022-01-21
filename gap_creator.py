@@ -2,7 +2,7 @@
 Created on January 2022
 
 - you have to use the version 0.5 of FEDOT
-- if there is a gap between data point 2 and 7 hands error
+- if there is a gap between data point 2 and 7 hands error (last day checked: 6. January 2022)
 
 @author: Niko Suchowitz
 """
