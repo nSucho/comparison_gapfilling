@@ -70,7 +70,7 @@ def get_simple_ridge_pipeline():
 	:return: the pipeline
 	"""
 	node_lagged = PrimaryNode('lagged')
-	node_lagged.custom_params = {'window_size': 250}
+	node_lagged.custom_params = {'window_size': 150}
 
 	node_final = SecondaryNode('ridge', nodes_from=[node_lagged])
 	pipeline = Pipeline(node_final)

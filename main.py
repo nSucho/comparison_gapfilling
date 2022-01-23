@@ -3,10 +3,10 @@ Created on December 2021
 
 @author: Niko Suchowitz
 """
-import interpolate_main as int_n_plt
 from gap_creator import create_gaps
 from gap_duplicator import duplicate_nans
 from unify_data import unify_monthly, unify_year
+from interpolate_main import fill_and_valid
 import pandas as pd
 # deactivates unnecessary warnings of pandas
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -49,9 +49,9 @@ def readin_data():
 		# create manually random gaps or duplicate gaps from another country;
 		# comment the other out, both at the same time not recommended!
 		# manually
-		#data_with_gaps = create_gaps(df_original)
+		data_with_gaps = create_gaps(df_original)
 		# duplicate
-		data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
+		#data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
 
 		# calc missing data in modified in percent
 		missing_percent_m = round(calc_missing_data(data_with_gaps), 2)
@@ -63,7 +63,7 @@ def readin_data():
 			# also hand the original, so we can calc the error
 			data_with_gaps["DateTime"] = pd.to_datetime(data_with_gaps["DateTime"])
 			save_name = '2018_ActualTotalLoad_6.1.A_'+mapcode_gapfree+'_'+areatypecode
-			int_n_plt.fill_and_valid(df_original, data_with_gaps, save_name, mapcode_gapfree, missing_percent_m)
+			fill_and_valid(df_original, data_with_gaps, save_name, mapcode_gapfree, missing_percent_m)
 		else:
 			print("There are no gaps to fill!")
 	else:

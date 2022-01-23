@@ -62,14 +62,9 @@ def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 		print(f'Coefficient of determination fedot-forward: {r2_score(original_series, fedot_forward):.3f}')
 		print(f'Coefficient of determination fedot-bidirect: {r2_score(original_series, fedot_bidirect):.3f}')
 
-		#avg_week_mae = round(mean_absolute_error(original_series, avg_week_series), 2)
-		#poly_reg_mae = round(mean_absolute_error(original_series, poly_reg_series), 2)
-		#fedot_forward_mae = round(mean_absolute_error(original_series, fedot_forward), 2)
-		#fedot_bidirect_mae = round(mean_absolute_error(original_series, fedot_bidirect), 2)
-
 		# TODO: add fedot
-		#plot_data1(original_series, avg_week_series, poly_reg_series)
-		#plot_data2(original, df_w_gaps, avg_week, avg_week_mae, poly_reg, poly_reg_mae)
+		#plot_data1(original_series, avg_week_series, poly_reg_series, fedot_forward)
+		plot_data2(original, df_w_gaps, avg_week, poly_reg, fedot_forward, fedot_bidirect)
 
 	else:
 		print('There are no errors to interpolate')
