@@ -55,8 +55,13 @@ def readin_data():
 
 		# calc missing data in modified in percent
 		missing_percent_m = round(calc_missing_data(data_with_gaps), 2)
-		print('amount of NaN in modified: '+str(missing_percent_m))
-		print(missing_percent_m, "Percent is missing Data of "+mapcode_gapfree)
+		#print('amount of NaN in modified: '+str(missing_percent_m))
+		#print(missing_percent_m, "Percent is missing Data of "+mapcode_gapfree)
+		with open("results.txt", "a") as file_object:
+			file_object.write("amount of NaN in modified: "+str(missing_percent_m))
+			file_object.write("\n")
+			file_object.write(str(missing_percent_m)+" Percent is missing Data of "+mapcode_gapfree)
+			file_object.write("\n")
 
 		if missing_percent_m != 0:
 			# fill and plot data_with_gaps
