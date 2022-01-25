@@ -4,7 +4,6 @@ Created on January 2021
 @author: Niko Suchowitz
 """
 
-# TODO: implement better pipeline
 import time
 import numpy as np
 import os

@@ -30,7 +30,6 @@ def averageWeek(data_w_nan, mapcode, save_name):
 	groups = [data_w_nan.index.dayofweek, data_w_nan.index.hour]
 	return data_w_nan.groupby(groups).transform('mean')
 	"""
-	# TODO: small gaps (up to 3 hours) fill with linear interpolation
 	# first we make a copy, so we don't change the original df
 	new_data_w_nan = data_w_nan.copy()
 

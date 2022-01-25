@@ -54,21 +54,6 @@ def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 			file_object.write("\n")
 			file_object.write("-----")
 			file_object.write("\n")
-		# print the MSE for validation; represents the difference between the original and predicted values
-			file_object.write(
-				f'Mean Squared Error avg-week: {mean_squared_error(original_series, avg_week_series):.3f}')
-			file_object.write("\n")
-			file_object.write(
-				f'Mean Squared Error poly-reg: {mean_squared_error(original_series, poly_reg_series):.3f}')
-			file_object.write("\n")
-			file_object.write(
-				f'Mean Squared Error fedot-forward: {mean_squared_error(original_series, fedot_forward):.3f}')
-			file_object.write("\n")
-			file_object.write(
-				f'Mean Squared Error fedot-bidirect: {mean_squared_error(original_series, fedot_bidirect):.3f}')
-			file_object.write("\n")
-			file_object.write("-----")
-			file_object.write("\n")
 		# print the RMSE for validation; is the error rate by the square root of MSE
 			file_object.write(
 				f'Root Mean Squared Error avg-week: {np.sqrt(mean_squared_error(original_series, avg_week_series)):.3f}')
@@ -81,6 +66,21 @@ def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 			file_object.write("\n")
 			file_object.write(
 				f'Root Mean Squared Error fedot-bidirect: {np.sqrt(mean_squared_error(original_series, fedot_bidirect)):.3f}')
+			file_object.write("\n")
+			file_object.write("-----")
+			file_object.write("\n")
+		# print the R^2 for validation; represents the difference between the original and predicted values
+			file_object.write(
+				f'Coefficient of determination avg-week: {r2_score(original_series, avg_week_series):.3f}')
+			file_object.write("\n")
+			file_object.write(
+				f'Coefficient of determination poly-reg: {r2_score(original_series, poly_reg_series):.3f}')
+			file_object.write("\n")
+			file_object.write(
+				f'Coefficient of determination fedot-forward: {r2_score(original_series, fedot_forward):.3f}')
+			file_object.write("\n")
+			file_object.write(
+				f'Coefficient of determination fedot-bidirect: {r2_score(original_series, fedot_bidirect):.3f}')
 			file_object.write("\n")
 			file_object.write("-----")
 			file_object.write("\n")
