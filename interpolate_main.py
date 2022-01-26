@@ -37,7 +37,6 @@ def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 		# interpolation with fedot; autoML
 		fedot_forward, fedot_bidirect = fedot(df_w_gaps, mapcode, save_name)
 
-		# TODO: mae, vielleicht noch RMSE oder nur mse
 		# print the MAE for validation; represents the difference between the original and predicted values
 		with open("results.txt", "a") as file_object:
 			file_object.write(
@@ -86,7 +85,7 @@ def fill_and_valid(original, df_w_gaps, save_name, mapcode, missing_data_perc):
 			file_object.write("\n")
 
 		#plot_data1(original_series, avg_week_series, poly_reg_series, fedot_forward)
-		plot_data2(original, df_w_gaps, avg_week, poly_reg, fedot_forward, fedot_bidirect)
+		#plot_data2(original, df_w_gaps, avg_week, poly_reg, fedot_forward, fedot_bidirect)
 
 	else:
 		print('There are no errors to interpolate')
