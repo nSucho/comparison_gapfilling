@@ -21,7 +21,7 @@ def readin_data():
 	# all the countries we want to check in the files and also the areatype
 	# Key: Value = Country: MapCode
 	# first value is later taken as 'gapless' country and second value as country with gaps
-	countries = {'Austria': 'AT', 'Estonia': 'EE', 'Italy': 'IT'}
+	countries = {'Austria': 'AT', 'Bosnia': 'BA', 'Estonia': 'EE', 'Italy': 'IT'}
 	# MBA, BZN, CTA or CTY(most of the time all three have the same values, so just pick one)
 	areatypecode = "CTA"
 	# choose the year of which the data gets generalized (earliest 2014)
@@ -49,9 +49,9 @@ def readin_data():
 		# create manually random gaps or duplicate gaps from another country;
 		# comment the other out, both at the same time not recommended!
 		# manually
-		data_with_gaps = create_gaps(df_original)
+		#data_with_gaps = create_gaps(df_original)
 		# duplicate
-		#data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
+		data_with_gaps = duplicate_nans(df_original, mapcode_wgap)
 
 		# calc missing data in modified in percent
 		missing_percent_m = round(calc_missing_data(data_with_gaps), 2)
