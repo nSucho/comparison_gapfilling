@@ -9,9 +9,6 @@ import pandas as pd
 rcParams['figure.figsize'] = 18, 9
 
 
-# TODO: schöner/übersichtlicher plotten
-#   vielleicht nur stellen die leer waren?
-#   vielleicht immer tage zusammenfassen?
 def plot_data1(original, avg_week, poly_reg, fedot_forward):
 	"""
 

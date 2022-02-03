@@ -21,7 +21,7 @@ def readin_data():
 	# all the countries we want to check in the files and also the areatype
 	# Key: Value = Country: MapCode
 	# first value is later taken as 'gapless' country and second value as country with gaps
-	countries = {'Austria': 'AT', 'Bosnia': 'BA', 'Estonia': 'EE', 'Italy': 'IT'}
+	countries = {'Italy': 'IT', 'Bosnia': 'BA'}
 	# MBA, BZN, CTA or CTY(most of the time all three have the same values, so just pick one)
 	areatypecode = "CTA"
 	# choose the year of which the data gets generalized (earliest 2014)
