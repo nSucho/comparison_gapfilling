@@ -85,7 +85,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	isExist = os.path.exists('data/own_data')
 	if not isExist:
 		os.makedirs('data/own_data')
-	print("The new directory own_data created!")
+		print("The new directory own_data created!")
 	sorted_df.to_csv("data/own_data/sortedTotalLoad.csv", sep='\t', encoding='utf-8', index=False,
 	                 header=["DateTime", "ResolutionCode", "AreaCode",
 	                         "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue", "UpdateTime"])
@@ -112,7 +112,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	isExist = os.path.exists('data/own_data/gaplists')
 	if not isExist:
 		os.makedirs('data/own_data/gaplists')
-	print("The new directory gaplists created!")
+		print("The new directory gaplists created!")
 	# check if the gap-df is empty
 	if gap_df.empty:
 		#print("there are no gaps")
@@ -137,7 +137,7 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited')
 	if not isExist:
 		os.makedirs('data/own_data/ActualTotalLoad_edited')
-	print("The new directory ActualTotalLoad_edited created!")
+		print("The new directory ActualTotalLoad_edited created!")
 	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode)
 	if not isExist:
 		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode)
