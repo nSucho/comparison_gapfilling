@@ -81,6 +81,10 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	#	print("last of the month is in list")
 
 	# print the auxiliary-dataframe into a csv
+	# first check if folder exists and create if not
+	isExist = os.path.exists('data/own_data')
+	if not isExist:
+		os.makedirs('data/own_data')
 	sorted_df.to_csv("data/own_data/sortedTotalLoad.csv", sep='\t', encoding='utf-8', index=False,
 	                 header=["DateTime", "ResolutionCode", "AreaCode",
 	                         "AreaTypeCode", "AreaName", "MapCode", "TotalLoadValue", "UpdateTime"])
@@ -103,6 +107,10 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	"""create a csv with all gaps included"""
 	# convert list with the gaps to a dataframe
 	gap_df = pd.DataFrame(gap_list)
+	# first check if folder exists and create if not
+	isExist = os.path.exists('data/own_data/gaplists')
+	if not isExist:
+		os.makedirs('data/own_data/gaplists')
 	# check if the gap-df is empty
 	if gap_df.empty:
 		#print("there are no gaps")
@@ -123,6 +131,10 @@ def checkForGaps(raw_df, f_df_name, areatypecode, areaname, mapcode):
 	final_df.sort_values(by='DateTime', inplace=True)
 	final_df.reset_index(drop=True, inplace=True)
 	# save the final df as csv, check first if folder exists
+	# first check if folder exists and create if not
+	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited')
+	if not isExist:
+		os.makedirs('data/own_data/ActualTotalLoad_edited')
 	isExist = os.path.exists('data/own_data/ActualTotalLoad_edited/'+mapcode)
 	if not isExist:
 		os.makedirs('data/own_data/ActualTotalLoad_edited/'+mapcode)
